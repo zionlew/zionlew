@@ -1,0 +1,173 @@
+本地申请SSH
+$ ssh-keygen -t rsa -C "zionlew@163.com"
+
+测试ssh是否好用
+$ ssh -T git@github.com
+
+远程到本地
+git clone git@github.com:zionlew/zionlew.git
+
+本地新建个文件
+$ git add Test01
+$ git commit Test01 -m "test"
+
+远程创建版本库
+$ git remote add origin git@github.com:michaelliao/learngit.git
+
+本地更改提交到github
+$ git push -u origin master
+
+查看状态
+$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        deleted:    Test01
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+$ git status -s
+ D Test01
+ 
+ 
+ 
+ 查看log
+ $git log
+ $git log --pretty=oneline
+ 
+版本回退
+$ git reset --hard 1d63aaa
+HEAD is now at 1d63aaa test
+
+$ git reflog
+$ git reflog
+1d63aaa HEAD@{0}: reset: moving to 1d63aaa
+285c7c3 HEAD@{1}: commit: Mod Demo.java
+df7247b HEAD@{2}: commit: Del /test
+1d63aaa HEAD@{3}: commit: test
+0d4a4be HEAD@{4}: commit: test
+f7a8f65 HEAD@{5}: clone: from git@github.com:zionlew/zionlew.git
+
+
+撤销修改
+$git checkout -- Demo.java
+回到最后一次commit的时候
+git checkout -- file命令中的--很重要，没有--，就变成了“创建一个新分支”的命令，我们在后面的分支管理中
+
+ 
+ 
+ 分支处理
+ 
+ 创建分支
+ LH@LH-PC /d/git/zionlew/Code (master)
+$ git branch java
+
+切换分支
+LH@LH-PC /d/git/zionlew/Code (master)
+$ git checkout java
+Switched to branch 'java'
+
+查看当前分支
+LH@LH-PC /d/git/zionlew/Code (java)
+$ git branch
+* java
+  master
+
+ 分支合并
+  LH@LH-PC /d/git/zionlew/Code (java)
+$ ls
+Demo.java  JavaDom  test
+
+LH@LH-PC /d/git/zionlew/Code (java)
+$ cat test
+java branch
+
+LH@LH-PC /d/git/zionlew/Code (java)
+$ git checkout master
+Switched to branch 'master'
+Your branch is up-to-date with 'origin/master'.
+
+LH@LH-PC /d/git/zionlew/Code (master)
+$ ls
+Demo.java  JavaDom
+
+合并分支到当前分支
+LH@LH-PC /d/git/zionlew/Code (master)
+$ git merge java
+Updating 5075670..907b93f
+Fast-forward
+ Code/test | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 Code/test
+ 
+删除分支
+LH@LH-PC /d/git/zionlew/Code (master)
+$ git branch -d java
+Deleted branch java (was 907b93f).
+ 
+ 
+ Git鼓励大量使用分支：
+
+查看分支：git branch
+
+创建分支：git branch name
+
+切换分支：git checkout name
+
+创建+切换分支：git checkout -b name
+
+合并某分支到当前分支：git merge name
+
+删除分支：git branch -d name
+
+
+准备合并dev分支，请注意--no-ff参数，表示禁用“Fast forward”：
+
+$ git merge --no-ff -m "merge with no-ff" dev
+Merge made by the 'recursive' strategy.
+ readme.txt |    1 +
+ 1 file changed, 1 insertion(+)
+因为本次合并要创建一个新的commit，所以加上-m参数，把commit描述写进去。
+
+合并后，我们用git log看看分支历史：
+
+$ git log --graph --pretty=oneline --abbrev-commit
+*   7825a50 merge with no-ff
+|\
+| * 6224937 add merge
+|/
+*   59bc1cb conflict fixed
+...
+
+
+Bug分支
+
+并不是你不想提交，而是工作只进行到一半，还没法提交，预计完成还需1天时间。但是，必须在两个小时内修复该bug，怎么办？
+
+幸好，Git还提供了一个stash功能，可以把当前工作现场“储藏”起来，等以后恢复现场后继续工作：
+
+$ git stash
+Saved working directory and index state WIP on dev: 6224937 add merge
+HEAD is now at 6224937 add merge
+ 
+ 
+ 太棒了，原计划两个小时的bug修复只花了5分钟！现在，是时候接着回到dev分支干活了！
+
+$ git checkout dev
+Switched to branch 'dev'
+$ git status
+# On branch dev
+nothing to commit (working directory clean)
+工作区是干净的，刚才的工作现场存到哪去了？用git stash list命令看看：
+
+$ git stash list
+stash@{0}: WIP on dev: 6224937 add merge
+工作现场还在，Git把stash内容存在某个地方了，但是需要恢复一下，有两个办法：
+
+一是用git stash apply恢复，但是恢复后，stash内容并不删除，你需要用git stash drop来删除；
+
+另一种方式是用git stash pop，恢复的同时把stash内容也删了：
