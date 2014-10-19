@@ -1,0 +1,12 @@
+1.install build-essential and linux-headers
+  $ sudo apt-get install build-essential 
+  $ sudo apt-get install linux-headers-`uname -r`
+
+2. 
+  $ sudo -i
+  # cd /lib/modules/ 3.8.0-19-generic/build/include
+  注： 3.8.0-19-generic替换为 uname -r 命令显示的内容
+  # cp ./generated/uapi/linux/version.h linux/version.h
+ 
+3.
+  $ sudo ./vmware-install.pl
