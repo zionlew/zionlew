@@ -1,6 +1,9 @@
 本地申请SSH
 $ ssh-keygen -t rsa -C "zionlew@163.com"
 
+将生成的id_rsa.pub中的内容添加到github网站
+Uer/Settings/SSH and GPG keys
+
 测试ssh是否好用
 $ ssh -T git@github.com
 
